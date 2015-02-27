@@ -1,4 +1,3 @@
-import sys
 import re
 import pymysql.cursors
 from .util import setdocstring

@@ -2,8 +2,8 @@ import os
 from setuptools import setup, find_packages
 
 install_requires = [
-    'umysql',
-    'pymysql',
+    'umysql>=2.61',
+    'pymysql>=0.6',
 ]
 
 setup(

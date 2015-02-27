@@ -1,1 +1,1 @@
-conversions = {}
+from pymysql.converters import *
