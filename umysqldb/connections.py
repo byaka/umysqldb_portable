@@ -20,30 +20,27 @@ from .times import (
     encode_timedelta,
     encode_time,
     TimeDelta_or_None,
-    mysql_timestamp_converter,
 )
 
 
 encoders = {
-    time.struct_time : encode_struct_time,
+    time.struct_time: encode_struct_time,
     datetime.timedelta: encode_timedelta,
     datetime.time: encode_time,
 }
 
 decoders = {
     FIELD_TYPE.TIME: TimeDelta_or_None,
-    FIELD_TYPE.TIMESTAMP: mysql_timestamp_converter,
     FIELD_TYPE.NEWDECIMAL: float,
 }
+
 
 def notouch(x):
     return x
 
-def defaulterrorhandler(connection, cursor, errorclass, errorvalue):
-    raise errorclass, errorvalue
-
 
 class ResultSet(object):
+
     def __init__(self, affected_rows=None, insert_id=None, description=None,
                  rows=None):
         self.affected_rows = affected_rows
@@ -55,8 +52,6 @@ class ResultSet(object):
 class Connection(pymysql.connections.Connection):
 
     """MySQL Database Connection Object"""
-
-    errorhandler = defaulterrorhandler
 
     @setdocstring(pymysql.connections.Connection.__init__)
     def __init__(self, *args, **kwargs):
@@ -93,11 +88,19 @@ class Connection(pymysql.connections.Connection):
             raise Error("Already closed")
         self._umysql_conn.close()
 
-
     def _connect(self):
         try:
             self._umysql_conn.connect(self.host, self.port, self.user,
                                       self.password, self.db or '', False, self.charset)
+            if self.sql_mode is not None:
+                c = self.cursor()
+                c.execute("SET sql_mode=%s", (self.sql_mode,))
+            if self.init_command is not None:
+                c = self.cursor()
+                c.execute(self.init_command)
+                self.commit()
+            if self.autocommit_mode is not None:
+                self.autocommit(self.autocommit_mode)
         except socket.error, e:
             raise OperationalError(2003, "Can't connect to MySQL server on %r (%s)" % (
                 self.host, e.args[0]))
@@ -136,9 +139,10 @@ class Connection(pymysql.connections.Connection):
             converters = [self.decoders.get(field[1]) for field in
                           result_set.fields]
             rows = tuple(tuple(conv(data) if conv and data is not None else data
-                          for data, conv in zip(row, converters))
+                               for data, conv in zip(row, converters))
                          for row in result_set.rows)
-            description = tuple(f + (None,) * (7 - len(f)) for f in result_set.fields)
+            description = tuple(f + (None,) * (7 - len(f))
+                                for f in result_set.fields)
             rs = ResultSet(description=description, rows=rows,
                            affected_rows=len(rows))
         return rs
