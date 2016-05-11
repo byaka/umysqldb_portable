@@ -1,5 +1,5 @@
 import re
-import pymysql.cursors
+import pymysql_portable.cursors
 from .util import setdocstring
 
 # Thank you MySQLdb for the kind regex
@@ -37,9 +37,9 @@ def _flatten(alist):
     return tuple(result)
 
 
-class Cursor(pymysql.cursors.Cursor):
+class Cursor(pymysql_portable.cursors.Cursor):
 
-    @setdocstring(pymysql.cursors.Cursor.execute)
+    @setdocstring(pymysql_portable.cursors.Cursor.execute)
     def execute(self, query, args=None):
         if args is None:
             args = ()
@@ -51,7 +51,7 @@ class Cursor(pymysql.cursors.Cursor):
         self._executed = query
         return result
 
-    @setdocstring(pymysql.cursors.Cursor.executemany)
+    @setdocstring(pymysql_portable.cursors.Cursor.executemany)
     def executemany(self, query, args):
         if not args:
             return

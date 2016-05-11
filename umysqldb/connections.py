@@ -3,9 +3,9 @@ import time
 import datetime
 import socket
 
-import umysql
-import pymysql.connections
-from pymysql.constants import FIELD_TYPE
+from umysql_portable import umysql
+import pymysql_portable.connections
+from pymysql_portable.constants import FIELD_TYPE
 
 from .util import setdocstring
 from .cursors import Cursor
@@ -49,11 +49,11 @@ class ResultSet(object):
         self.rows = rows
 
 
-class Connection(pymysql.connections.Connection):
+class Connection(pymysql_portable.connections.Connection):
 
     """MySQL Database Connection Object"""
 
-    @setdocstring(pymysql.connections.Connection.__init__)
+    @setdocstring(pymysql_portable.connections.Connection.__init__)
     def __init__(self, *args, **kwargs):
         if 'cursorclass' not in kwargs:
             kwargs['cursorclass'] = Cursor
@@ -64,25 +64,25 @@ class Connection(pymysql.connections.Connection):
         self._umysql_conn = umysql.Connection()
         super(Connection, self).__init__(*args, **kwargs)
 
-    @setdocstring(pymysql.connections.Connection.set_charset)
+    @setdocstring(pymysql_portable.connections.Connection.set_charset)
     def set_charset(self, charset):
         if charset:
             self._umysql_conn.query("SET NAMES %s", (charset,))
             self.charset = charset
 
-    @setdocstring(pymysql.connections.Connection.autocommit)
+    @setdocstring(pymysql_portable.connections.Connection.autocommit)
     def autocommit(self, value):
         self._umysql_conn.query("SET AUTOCOMMIT = %s", (value,))
 
-    @setdocstring(pymysql.connections.Connection.commit)
+    @setdocstring(pymysql_portable.connections.Connection.commit)
     def commit(self):
         self.query('COMMIT')
 
-    @setdocstring(pymysql.connections.Connection.rollback)
+    @setdocstring(pymysql_portable.connections.Connection.rollback)
     def rollback(self):
         self.query("ROLLBACK")
 
-    @setdocstring(pymysql.connections.Connection.close)
+    @setdocstring(pymysql_portable.connections.Connection.close)
     def close(self):
         if not self._umysql_conn.is_connected():
             raise Error("Already closed")

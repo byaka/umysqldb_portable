@@ -1,10 +1,17 @@
-========
-umysqldb
-========
+About this repo
+---------------
+This repository contains version (2016/05/11), forked from hivelocity_'s repository and adapted for portable using on debian6x64.
+Main reason of it that new versions of pymysql not compatible with this lib.
+
+
+About lib
+---------
+
 
 A MySQLdb compatible wrapper around ultramysql_.
 
 .. _ultramysql: https://github.com/esnme/ultramysql
+.. _hivelocity: https://github.com/hivelocity/umysqldb version
 
 Usage
 -----
@@ -12,11 +19,8 @@ Usage
 ::
 
   >>> import umysqldb
-  >>> umysqldb.install_as_MySQLdb()
-  >>> import MySQLdb
-  >>> MySQLdb is umysqldb
-  True
-  >>> conn = MySQLdb.connect(host='localhost')
+
+  >>> conn = umysqldb.connect(host='localhost')
   >>> curs = conn.cursor()
   >>> curs.execute("select 1")
   1
@@ -24,7 +28,3 @@ Usage
   (1L,)
   >>> conn.close()
 
-
-.. image:: https://travis-ci.org/hongqn/umysqldb.png?branch=master,develop
-   :alt: Build Status
-   :target: https://travis-ci.org/hongqn/umysqldb

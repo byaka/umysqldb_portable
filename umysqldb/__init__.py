@@ -1,15 +1,15 @@
 import sys
-import pymysql
-from pymysql import *
-from pymysql import DATETIME
-from pymysql import __all__
+import pymysql_portable
+from pymysql_portable import *
+from pymysql_portable import DATETIME
+from pymysql_portable import __all__
 
 from .util import setdocstring
 
 __all__ += ['DATETIME']
 
 
-@setdocstring(pymysql.Connect)
+@setdocstring(pymysql_portable.Connect)
 def Connect(*args, **kwargs):
     from .connections import Connection
     return Connection(*args, **kwargs)
@@ -24,6 +24,7 @@ def install_as_MySQLdb():
     After this function is called, any application that imports MySQLdb or
     _mysql will unwittingly actually use umysqldb.
     """
+    raise NotImplementedError('"install_as_MySQLdb" not supported for portable lib')
     sys.modules["MySQLdb"] = sys.modules["_mysql"] = sys.modules["umysqldb"]
     sys.modules["MySQLdb.constants"] = sys.modules["pymysql.constants"]
 

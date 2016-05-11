@@ -1,1 +1,1 @@
-from pymysql.converters import *
+from pymysql_portable.converters import *

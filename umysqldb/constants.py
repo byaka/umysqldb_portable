@@ -1,1 +1,1 @@
-from pymysql.constants import *
+from pymysql_portable.constants import *

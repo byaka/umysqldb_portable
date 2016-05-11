@@ -1,4 +1,4 @@
-from pymysql.err import *
+from pymysql_portable.err import *
 
 def map_umysql_error_to_umysqldb_exception(umysql_exc):
     errorclass = error_map.get(umysql_exc.args[0])
